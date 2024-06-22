@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Vineflower in TeaVM</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap");
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "JetBrains Mono", monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1e1e1e;
+                --text-color: #cfcfcf;
+            }
+        }
+
+        #file-input {
+            margin-bottom: 20px;
+        }
+
+        #file-content {
+            width: 80%;
+            max-width: 1024px;
+            height: 60vh;
+            padding: 10px;
+            overflow-y: auto;
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <input accept=".class" id="file-input" type="file">
+    <div id="file-content"></div>
+
+    <script src="https://cdn.jsdelivr.net/gh/leonardosnt/java-class-tools@master/dist/java-class-tools.min.js"></script>
+    <script type="module">
+        import { decompile } from "https://cdn.jsdelivr.net/gh/cephxdev/vf@main/dist/vf.js";
+
+        const decoder = new TextDecoder();
+        const readClassName = (buf) => {
+            const cf = new JavaClassTools.JavaClassFileReader().read(buf);
+            const cpEntry = cf.constant_pool[cf.constant_pool[cf.this_class].name_index];
+
+            return decoder.decode(new Uint8Array(cpEntry.bytes));
+        };
+
+        const input = document.getElementById("file-input");
+        input.value = null; // clear file input
+        input.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    const buf = new Uint8Array(evt.target.result);
+                    const name = readClassName(buf);
+
+                    const start = Date.now();
+                    console.log(`Decompiling ${name}...`);
+
+                    document.getElementById("file-content").textContent = decompile(name, {
+                        source: (n) => {
+                            return n === name ? buf : null;
+                        },
+                    });
+
+                    console.log(`Decompiled ${name} in ${Date.now() - start}ms.`);
+                };
+
+                reader.readAsArrayBuffer(file);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+package dev.cephx.vf.teavm;
+
+import java.util.Base64;
+
+class BuildConstants {
+    public static final byte[] OBJECT_CLASS = Base64.getDecoder().decode("{{ java_lang_Object }}");
+}
