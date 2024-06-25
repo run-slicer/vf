@@ -4,6 +4,8 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSByRef;
 import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSObject;
+import org.teavm.jso.core.JSPromise;
+import org.teavm.jso.typedarrays.Uint8Array;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,9 +23,8 @@ public interface Options extends JSObject {
         return options;
     }
 
-    // can't use the logical OR, it breaks the TeaVM minifier
-    @JSBody(script = "return this.source ? this.source : (() => { return null; });")
-    Source source();
+    @JSBody(params = {"name"}, script = "return this.source ? this.source(name) : Promise.resolve(null);")
+    JSPromise<Uint8Array> source(String name);
 
     @JSBody(script = "return this.resources || [];")
     String[] resources();
@@ -34,11 +35,5 @@ public interface Options extends JSObject {
 
         @JSBody(script = "return this[1];")
         String value();
-    }
-
-    @JSFunctor
-    interface Source extends JSObject {
-        @JSByRef
-        byte[] get(String name);
     }
 }

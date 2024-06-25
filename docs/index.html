@@ -73,15 +73,15 @@
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (evt) => {
+                reader.onload = async (evt) => {
                     const buf = new Uint8Array(evt.target.result);
                     const name = readClassName(buf);
 
                     const start = Date.now();
                     console.log(`Decompiling ${name}...`);
 
-                    document.getElementById("file-content").textContent = decompile(name, {
-                        source: (n) => {
+                    document.getElementById("file-content").textContent = await decompile(name, {
+                        source: async (n) => {
                             return n === name ? buf : null;
                         },
                     });

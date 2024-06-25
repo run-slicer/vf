@@ -25,6 +25,7 @@ teavm.js {
     mainClass = "dev.cephx.vf.Main"
     moduleType = org.teavm.gradle.api.JSModuleType.ES2015
     // obfuscated = false
+    // optimization = org.teavm.gradle.api.OptimizationLevel.NONE
 }
 
 tasks {

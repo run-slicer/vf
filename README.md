@@ -9,8 +9,8 @@ const fs = require("fs");
 const { decompile } = require("./vf.js"); // get it from the dist/ directory or jsDelivr
 
 const data = fs.readFileSync("./your/package/HelloWorld.class"); // read a class file
-console.log(decompile("your/package/HelloWorld", {
-    source: (name) => {
+console.log(await decompile("your/package/HelloWorld", {
+    source: async (name) => {
         /* provide classes for analysis here, including the one you want to decompile */
         
         console.log(name); /* internal name, e.g. java/lang/Object */
