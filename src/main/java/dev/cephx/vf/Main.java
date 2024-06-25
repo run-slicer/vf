@@ -10,6 +10,7 @@ import org.teavm.jso.JSByRef;
 import org.teavm.jso.JSExport;
 import org.teavm.jso.core.JSObjects;
 import org.teavm.jso.core.JSPromise;
+import org.teavm.jso.core.JSString;
 import org.teavm.jso.typedarrays.Uint8Array;
 
 import java.util.HashMap;
@@ -17,11 +18,11 @@ import java.util.Map;
 
 public class Main {
     @JSExport
-    public static JSPromise<String> decompile(String name, Options options) {
+    public static JSPromise<JSString> decompile(String name, Options options) {
         return decompile0(name, options == null || JSObjects.isUndefined(options) ? JSObjects.create() : options);
     }
 
-    private static JSPromise<String> decompile0(String name, Options options) {
+    private static JSPromise<JSString> decompile0(String name, Options options) {
         return new JSPromise<>((resolve, reject) -> {
             new Thread(() -> {
                 try {
@@ -35,7 +36,7 @@ public class Main {
                     fernflower.addLibrary(new ResourceSource(options.resources(), name0 -> source0(options, name0)));
                     fernflower.decompileContext();
 
-                    resolve.accept(outputSink.output());
+                    resolve.accept(JSString.valueOf(outputSink.output()));
                 } catch (Throwable e) {
                     reject.accept(e);
                 }
