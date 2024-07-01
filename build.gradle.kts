@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.blossom)
 }
 
-group = "dev.cephx"
+group = "run.slicer"
 version = "${libs.versions.vineflower.get()}-teavm-SNAPSHOT"
 description = "A JavaScript port of the Vineflower decompiler."
 
@@ -22,7 +22,7 @@ java.toolchain {
 }
 
 teavm.js {
-    mainClass = "dev.cephx.vf.Main"
+    mainClass = "run.slicer.vf.Main"
     moduleType = org.teavm.gradle.api.JSModuleType.ES2015
     // obfuscated = false
     // optimization = org.teavm.gradle.api.OptimizationLevel.NONE
