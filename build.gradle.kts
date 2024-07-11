@@ -4,8 +4,10 @@ plugins {
     alias(libs.plugins.blossom)
 }
 
+val thisVersion = "0.1.0"
+
 group = "run.slicer"
-version = "${libs.versions.vineflower.get()}-teavm-SNAPSHOT"
+version = "$thisVersion-${libs.versions.vineflower.get()}"
 description = "A JavaScript port of the Vineflower decompiler."
 
 repositories {
@@ -32,8 +34,31 @@ tasks {
     register<Copy>("copyDist") {
         group = "build"
 
-        from(generateJavaScript)
+        from("README.md", "LICENSE", "LICENSE-VF", generateJavaScript, "vf.d.ts")
         into("dist")
+
+        doLast {
+            file("dist/package.json").writeText(
+                """
+                    {
+                      "name": "@run-slicer/vf",
+                      "version": "${project.version}",
+                      "description": "A JavaScript port of the Vineflower decompiler (https://github.com/Vineflower/vineflower).",
+                      "main": "vf.js",
+                      "types": "vf.d.ts",
+                      "keywords": [
+                        "decompiler",
+                        "java",
+                        "decompilation",
+                        "vf",
+                        "vineflower"
+                      ],
+                      "author": "run-slicer",
+                      "license": "Apache License 2.0, MIT"
+                    }
+                """.trimIndent()
+            )
+        }
     }
 
     build {
