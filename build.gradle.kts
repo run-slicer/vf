@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.blossom)
 }
 
-val thisVersion = "0.1.0"
+val thisVersion = "0.1.1"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
