@@ -32,7 +32,7 @@ public class Main {
                     final var outputSink = new OutputSinkImpl(name);
 
                     final var fernflower = new Fernflower(ResultSaverImpl.INSTANCE, options0, FernflowerLoggerImpl.INSTANCE);
-                    fernflower.addSource(new ClassSource(name, name0 -> source0(options, name0), outputSink));
+                    fernflower.addSource(new ClassSource(name, options.resources(), name0 -> source0(options, name0), outputSink));
                     fernflower.addLibrary(new ResourceSource(options.resources(), name0 -> source0(options, name0)));
                     fernflower.decompileContext();
 
