@@ -1,5 +1,6 @@
 package run.slicer.vf;
 
+import org.teavm.jso.JSExceptions;
 import run.slicer.vf.impl.*;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
@@ -38,7 +39,7 @@ public class Main {
 
                     resolve.accept(JSString.valueOf(outputSink.output()));
                 } catch (Throwable e) {
-                    reject.accept(e);
+                    reject.accept(JSExceptions.getJSException(e));
                 }
             }).start();
         });
@@ -50,7 +51,7 @@ public class Main {
     private static void source0(Options options, String name, AsyncCallback<byte[]> callback) {
         options.source(name)
                 .then(b -> {
-                    callback.complete(unwrapByteArray(b));
+                    callback.complete(b == null || JSObjects.isUndefined(b) ? null : unwrapByteArray(b));
                     return null;
                 })
                 .catchError(err -> {
