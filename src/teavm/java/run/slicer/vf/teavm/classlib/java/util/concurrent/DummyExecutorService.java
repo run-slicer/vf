@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
-final class DummyExecutorService implements ExecutorService {
+public class DummyExecutorService implements ExecutorService {
     private boolean shutdown = false;
 
     @Override
@@ -36,9 +36,9 @@ final class DummyExecutorService implements ExecutorService {
     @Override
     public <T> Future<T> submit(Callable<T> task) {
         try {
-            return new Task<>(task.call(), null);
+            return new DummyTask<>(task.call(), null);
         } catch (Throwable t) {
-            return new Task<>(null, t);
+            return new DummyTask<>(null, t);
         }
     }
 
@@ -47,10 +47,10 @@ final class DummyExecutorService implements ExecutorService {
         try {
             task.run();
         } catch (Throwable t) {
-            return new Task<>(null, t);
+            return new DummyTask<>(null, t);
         }
 
-        return new Task<>(result, null);
+        return new DummyTask<>(result, null);
     }
 
     @Override
@@ -58,10 +58,10 @@ final class DummyExecutorService implements ExecutorService {
         try {
             task.run();
         } catch (Throwable t) {
-            return new Task<>(null, t);
+            return new DummyTask<>(null, t);
         }
 
-        return new Task<>(null, null);
+        return new DummyTask<>(null, null);
     }
 
     @Override
@@ -87,36 +87,5 @@ final class DummyExecutorService implements ExecutorService {
     @Override
     public void execute(Runnable command) {
         command.run();
-    }
-
-    private record Task<T>(T value, Throwable error) implements Future<T> {
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            return false;
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return false;
-        }
-
-        @Override
-        public boolean isDone() {
-            return true;
-        }
-
-        @Override
-        public T get() throws ExecutionException {
-            if (this.error != null) {
-                throw new ExecutionException(this.error);
-            }
-
-            return this.value;
-        }
-
-        @Override
-        public T get(long timeout, TimeUnit unit) throws ExecutionException {
-            return this.get();
-        }
     }
 }
