@@ -38,6 +38,7 @@ public class Main {
                     fernflower.decompileContext();
 
                     resolve.accept(JSString.valueOf(outputSink.output()));
+                    fernflower.clearContext();
                 } catch (Throwable e) {
                     reject.accept(JSExceptions.getJSException(e));
                 }

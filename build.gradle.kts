@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.blossom)
 }
 
-val thisVersion = "0.1.3"
+val thisVersion = "0.2.0"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -14,9 +14,17 @@ repositories {
     mavenCentral()
 }
 
+val vineflower by configurations.creating
+configurations.api.configure { extendsFrom(vineflower) }
+
 dependencies {
-    api(libs.vineflower)
+    vineflower(libs.vineflower)
     compileOnly(libs.teavm.core)
+
+    // expand plugins into the compilation classpath
+    implementation(provider {
+        zipTree(vineflower.singleFile).filter { it.extension == "jar" }
+    })
 }
 
 java.toolchain {
