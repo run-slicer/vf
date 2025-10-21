@@ -62,5 +62,5 @@ public class Main {
     }
 
     @JSBody(params = {"data"}, script = "return data;")
-    private static native @JSByRef byte[] unwrapByteArray(Uint8Array data);
+    private static native @JSByRef(optional = true) byte[] unwrapByteArray(Uint8Array data);
 }

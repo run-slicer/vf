@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.blossom)
 }
 
-val thisVersion = "0.2.0"
+val thisVersion = "0.2.1"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -12,6 +12,7 @@ description = "A JavaScript port of the Vineflower decompiler."
 
 repositories {
     mavenCentral()
+    maven("https://teavm.org/maven/repository")
 }
 
 val vineflower by configurations.creating
@@ -31,18 +32,22 @@ java.toolchain {
     languageVersion = JavaLanguageVersion.of(21)
 }
 
-teavm.js {
+teavm.wasmGC {
     mainClass = "run.slicer.vf.Main"
-    moduleType = org.teavm.gradle.api.JSModuleType.ES2015
+    modularRuntime = true
     // obfuscated = false
-    // optimization = org.teavm.gradle.api.OptimizationLevel.NONE
 }
 
 tasks {
     register<Copy>("copyDist") {
         group = "build"
+        dependsOn(generateWasmGC)
 
-        from("README.md", "LICENSE", "LICENSE-VF", generateJavaScript, "vf.d.ts")
+        from(
+            "README.md", "LICENSE", "LICENSE-VF", "vf.js", "vf.d.ts",
+            layout.buildDirectory.file("generated/teavm/wasm-gc/vf.wasm"),
+            "wasm-runtime/runtime.js", "wasm-runtime/wasm-imports-parser.js"
+        )
         into("dist")
 
         doLast {

@@ -1,8 +1,6 @@
 package run.slicer.vf;
 
 import org.teavm.jso.JSBody;
-import org.teavm.jso.JSByRef;
-import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.core.JSPromise;
 import org.teavm.jso.typedarrays.Uint8Array;

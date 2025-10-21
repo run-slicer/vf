@@ -1,0 +1,3 @@
+[submodule "wasm-runtime"]
+	path = wasm-runtime
+	url = https://github.com/run-slicer/wasm-runtime.git
