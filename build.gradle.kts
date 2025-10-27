@@ -1,3 +1,5 @@
+import org.teavm.gradle.api.OptimizationLevel
+
 plugins {
     `java-library`
     alias(libs.plugins.teavm) // order matters?
@@ -12,6 +14,7 @@ description = "A JavaScript port of the Vineflower decompiler."
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven("https://teavm.org/maven/repository")
 }
 
@@ -35,7 +38,13 @@ java.toolchain {
 teavm.wasmGC {
     mainClass = "run.slicer.vf.Main"
     modularRuntime = true
-    // obfuscated = false
+    obfuscated = false
+    optimization = OptimizationLevel.NONE
+    disassembly = true
+}
+
+tasks.disasmWasmGC {
+    html = false
 }
 
 tasks {
