@@ -1,6 +1,6 @@
 [versions]
 vineflower = "1.11.1"
-teavm = "0.13.0-dev-10"
+teavm = "0.13.0-SNAPSHOT"
 
 [libraries]
 vineflower = { group = "org.vineflower", name = "vineflower", version.ref = "vineflower" }
