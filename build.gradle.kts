@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.blossom)
 }
 
-val thisVersion = "0.2.2"
+val thisVersion = "0.2.3"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -47,14 +47,14 @@ teavm.wasmGC {
 tasks {
     register<Copy>("copyDist") {
         group = "build"
-        dependsOn(generateWasmGC)
 
         from(
             "README.md", "LICENSE", "LICENSE-VF", "vf.js", "vf.d.ts",
-            layout.buildDirectory.file("generated/teavm/wasm-gc/vf.wasm"),
-            "wasm-runtime/runtime.js", "wasm-runtime/wasm-imports-parser.js"
+            copyWasmGCRuntime, generateWasmGC
         )
         into("dist")
+
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
         doLast {
             file("dist/package.json").writeText(
@@ -82,6 +82,10 @@ tasks {
 
     build {
         dependsOn("copyDist")
+    }
+
+    clean {
+        delete("dist")
     }
 }
 

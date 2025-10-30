@@ -7,8 +7,8 @@ const wasmPath = async () => {
 let decompileFunc = null;
 export const decompile = async (name, options) => {
     if (!decompileFunc) {
-        const { load } = await import("./runtime.js");
-        const { exports } = await load(await wasmPath());
+        const { load } = await import("./vf.wasm-runtime.js");
+        const { exports } = await load(await wasmPath(), { noAutoImports: true });
 
         decompileFunc = exports.decompile;
     }
