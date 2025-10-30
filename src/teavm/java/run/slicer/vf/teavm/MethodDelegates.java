@@ -7,7 +7,6 @@ import org.jetbrains.java.decompiler.main.extern.IIdentifierRenamer;
 import org.jetbrains.java.decompiler.modules.renamer.ConverterHelper;
 import org.jetbrains.java.decompiler.struct.StructClass;
 import org.jetbrains.java.decompiler.util.DataInputFullStream;
-import org.teavm.classlib.java.lang.TThrowable;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -24,10 +23,6 @@ public final class MethodDelegates {
     @SuppressWarnings({"unchecked", "DataFlowIssue"})
     public static <K> ConcurrentHashMap.KeySetView<K, Boolean> java_util_concurrent_ConcurrentHashMap_newKeySet() {
         return (ConcurrentHashMap.KeySetView<K, Boolean>) ((Object) (new TConcurrentHashMap$KeySetView<>(new ConcurrentHashMap<>(), Boolean.TRUE)));
-    }
-
-    public static Throwable java_lang_Throwable_getCause(Throwable t) {
-        return ((TThrowable) t).getCause0(); // weird TeaVM bug, #380
     }
 
     public static IIdentifierRenamer org_jetbrains_java_decompiler_main_Fernflower_loadHelper(String ignored, IFernflowerLogger ignored1) {
