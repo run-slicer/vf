@@ -12,7 +12,6 @@ description = "A JavaScript port of the Vineflower decompiler."
 
 repositories {
     mavenCentral()
-    mavenLocal()
     maven("https://teavm.org/maven/repository")
 }
 
@@ -36,9 +35,14 @@ java.toolchain {
 teavm.wasmGC {
     mainClass = "run.slicer.vf.Main"
     modularRuntime = true
-    obfuscated = false
+    /*obfuscated = false
     optimization = org.teavm.gradle.api.OptimizationLevel.NONE
+    disassembly = true*/
 }
+
+/*tasks.disasmWasmGC {
+    html = false
+}*/
 
 tasks {
     register<Copy>("copyDist") {
