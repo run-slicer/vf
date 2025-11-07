@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenLocal()
         maven("https://teavm.org/maven/repository")
     }
 }

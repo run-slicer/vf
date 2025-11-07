@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.blossom)
 }
 
-val thisVersion = "0.2.3"
+val thisVersion = "0.2.4"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -12,6 +12,7 @@ description = "A JavaScript port of the Vineflower decompiler."
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven("https://teavm.org/maven/repository")
 }
 
