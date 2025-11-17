@@ -8,4 +8,3 @@ teavm-core = { group = "org.teavm", name = "teavm-core", version.ref = "teavm" }
 
 [plugins]
 teavm = { id = "org.teavm", version.ref = "teavm" }
-blossom = { id = "net.kyori.blossom", version = "2.1.0" }

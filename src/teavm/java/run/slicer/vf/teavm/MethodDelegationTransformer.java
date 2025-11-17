@@ -10,10 +10,8 @@ import java.util.Set;
 
 public final class MethodDelegationTransformer implements ClassHolderTransformer {
     private final Map<String, Set<String>> DELEGATED_METHODS = Map.of(
-            "java.lang.Integer", Set.of("sum"),
             "java.util.concurrent.ConcurrentHashMap", Set.of("newKeySet"),
             "org.jetbrains.java.decompiler.main.Fernflower", Set.of("loadHelper"),
-            "org.jetbrains.java.decompiler.struct.StructContext", Set.of("getSentinel"),
             "org.jetbrains.java.decompiler.main.rels.ClassWrapper", Set.of("killThread")
     );
 

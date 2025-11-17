@@ -1,7 +1,0 @@
-package run.slicer.vf.teavm;
-
-import java.util.Base64;
-
-class BuildConstants {
-    static final byte[] OBJECT_CLASS = Base64.getDecoder().decode("{{ java_lang_Object }}");
-}

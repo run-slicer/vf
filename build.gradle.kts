@@ -1,10 +1,9 @@
 plugins {
     `java-library`
     alias(libs.plugins.teavm) // order matters?
-    alias(libs.plugins.blossom)
 }
 
-val thisVersion = "0.3.0"
+val thisVersion = "0.3.1"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -32,6 +31,13 @@ dependencies {
 java.toolchain {
     languageVersion = JavaLanguageVersion.of(21)
 }
+
+/*teavm.js {
+    mainClass = "run.slicer.vf.Main"
+    moduleType = org.teavm.gradle.api.JSModuleType.ES2015
+    obfuscated = false
+    optimization = org.teavm.gradle.api.OptimizationLevel.NONE
+}*/
 
 teavm.wasmGC {
     mainClass = "run.slicer.vf.Main"
@@ -87,21 +93,5 @@ tasks {
 
     clean {
         delete("dist")
-    }
-}
-
-val kotlin.reflect.KClass<*>.bytes: ByteArray
-    get() = (java.classLoader ?: ClassLoader.getSystemClassLoader())
-        .getResourceAsStream(java.name.replace('.', '/') + ".class")!!
-        .use(`java.io`.InputStream::readAllBytes)
-
-val ByteArray.base64String: String
-    get() = `java.util`.Base64.getEncoder().encodeToString(this)
-
-sourceSets.teavm {
-    blossom {
-        javaSources {
-            property("java_lang_Object", Object::class.bytes.base64String)
-        }
     }
 }
