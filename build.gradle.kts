@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.teavm) // order matters?
 }
 
-val thisVersion = "0.3.1"
+val thisVersion = "0.3.2"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -32,12 +32,12 @@ java.toolchain {
     languageVersion = JavaLanguageVersion.of(21)
 }
 
-/*teavm.js {
+teavm.js {
     mainClass = "run.slicer.vf.Main"
     moduleType = org.teavm.gradle.api.JSModuleType.ES2015
-    obfuscated = false
-    optimization = org.teavm.gradle.api.OptimizationLevel.NONE
-}*/
+    /*obfuscated = false
+    optimization = org.teavm.gradle.api.OptimizationLevel.NONE*/
+}
 
 teavm.wasmGC {
     mainClass = "run.slicer.vf.Main"
@@ -54,6 +54,7 @@ teavm.wasmGC {
 tasks {
     register<Copy>("copyDist") {
         group = "build"
+        dependsOn(generateJavaScript)
 
         from(
             "README.md", "LICENSE", "LICENSE-VF", "vf.js", "vf.d.ts",
@@ -63,6 +64,15 @@ tasks {
 
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
+        doLast {
+            copy {
+                from(generateJavaScript)
+                into("dist")
+                rename("vf.js", "vf.runtime.js")
+
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+        }
         doLast {
             file("dist/package.json").writeText(
                 """

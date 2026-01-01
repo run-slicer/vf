@@ -7,10 +7,17 @@ const wasmPath = async () => {
 let decompileFunc = null;
 export const decompile = async (name, options) => {
     if (!decompileFunc) {
-        const { load } = await import("./vf.wasm-runtime.js");
-        const { exports } = await load(await wasmPath(), { noAutoImports: true });
+        try {
+            const { load } = await import("./vf.wasm-runtime.js");
+            const { exports } = await load(await wasmPath());
 
-        decompileFunc = exports.decompile;
+            decompileFunc = exports.decompile;
+        } catch (e) {
+            console.warn("Failed to load WASM module (non-compliant browser?), falling back to JS implementation", e);
+
+            const { decompile: decompileJS } = await import("./vf.runtime.js");
+            decompileFunc = decompileJS;
+        }
     }
 
     return decompileFunc(name, options);
