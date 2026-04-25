@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
-public class ClassWrapperPatch { // patch
+public class ClassWrapper {
     // Sometimes when debugging you want to be able to only analyze a specific method.
     // When not null, this skips processing of every method except the one with the name specified.
     private static final String DEBUG_METHOD_FILTER = null;
@@ -44,14 +44,14 @@ public class ClassWrapperPatch { // patch
     private final VBStyleCollection<MethodWrapper, String> methods = new VBStyleCollection<>();
     private final Map<String, MethodProperties> methodProperties = new HashMap<>();
 
-    public ClassWrapperPatch(ClassesProcessor.ClassNode node) { // patch
+    public ClassWrapper(ClassesProcessor.ClassNode node) {
         this.classStruct = node.classStruct;
         this.node = node;
     }
 
     public void init(LanguageSpec spec) {
         DecompilerContext.setProperty(DecompilerContext.CURRENT_CLASS, classStruct);
-        DecompilerContext.setProperty(DecompilerContext.CURRENT_CLASS_WRAPPER, (ClassWrapper) ((Object) this)); // patch
+        DecompilerContext.setProperty(DecompilerContext.CURRENT_CLASS_WRAPPER, this);
         DecompilerContext.setProperty(DecompilerContext.CURRENT_CLASS_NODE, node);
         DecompilerContext.getLogger().startClass(classStruct.qualifiedName);
 
@@ -89,10 +89,9 @@ public class ClassWrapperPatch { // patch
 
             try {
                 if (mt.containsCode()) {
-                    // if (maxSec == 0 || testMode) {
-                    root = MethodProcessor.codeToJava(classStruct, mt, md, varProc, spec);
-                    /*}
-                    else {
+                    if (maxSec == 0 || testMode) {
+                        root = MethodProcessor.codeToJava(classStruct, mt, md, varProc, spec);
+                    } else {
                         MethodProcessor mtProc = new MethodProcessor(classStruct, mt, md, varProc, spec, DecompilerContext.getCurrentContext());
 
                         Thread mtThread = new Thread(mtProc, "Java decompiler");
@@ -122,7 +121,7 @@ public class ClassWrapperPatch { // patch
                         if (error == null) {
                             root = mtProc.getResult();
                         }
-                    }*/
+                    }
                 } else {
                     boolean thisVar = !mt.hasModifier(CodeConstants.ACC_STATIC);
 
@@ -221,10 +220,10 @@ public class ClassWrapperPatch { // patch
         DecompilerContext.getLogger().endClass();
     }
 
-    /*@SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
     private static void killThread(Thread thread) {
         thread.stop();
-    }*/
+    }
 
     public MethodWrapper getMethodWrapper(String name, String descriptor) {
         return methods.getWithKey(InterpreterUtil.makeUniqueKey(name, descriptor));
