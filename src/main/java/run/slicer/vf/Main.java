@@ -27,6 +27,8 @@ public class Main {
         return JSPromise.callAsync(() -> {
             final Map<String, Object> options0 = new HashMap<>(IFernflowerPreferences.DEFAULTS);
             options0.putAll(options.rawOptions());
+            // report errors to us, not Vineflower
+            options0.put(IFernflowerPreferences.ERROR_MESSAGE, "Please report this to the vf issue tracker at https://github.com/katana-project/vf/issues with a copy of the class file (if you have the rights to distribute it!)");
 
             final var outputSink = new OutputSinkImpl();
             final var logger = options.logger() != null ? new OptionLogger(Objects.requireNonNull(options.logger())) : DefaultLogger.INSTANCE;

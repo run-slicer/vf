@@ -35,7 +35,7 @@ public class Diamond {
       try {
          Diamond.ChildB b = new Diamond.ChildB() {};
          ((Diamond.ChildC)b).doA();
-      } catch (ClassCastException var1) {
+      } catch (ClassCastException c) {
          System.out.println("case4: successfully thrown ClassCastException");
       }
    }

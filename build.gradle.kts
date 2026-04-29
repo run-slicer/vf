@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.teavm) // order matters?
 }
 
-val thisVersion = "0.5.0"
+val thisVersion = "0.6.0"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -23,9 +23,10 @@ dependencies {
     compileOnly(libs.teavm.core)
 
     // expand plugins into the compilation classpath
-    implementation(provider {
+    // TODO: the Kotlin plugin uses a shrinked down version of kotlin-metadata-jvm, which results in missing classes/members TeaVM needs
+    /*implementation(provider {
         zipTree(vineflower.singleFile).filter { it.extension == "jar" }
-    })
+    })*/
 }
 
 java.toolchain {
