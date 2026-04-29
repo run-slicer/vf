@@ -1,6 +1,5 @@
 package run.slicer.vf;
 
-import org.jetbrains.annotations.Nullable;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.core.JSPromise;
@@ -29,11 +28,9 @@ public interface Options extends JSObject {
     String[] resources();
 
     @JSBody(script = "return this.tokenCollector || null;")
-    @Nullable
     TokenCollector tokenCollector();
 
     @JSBody(script = "return this.logger || null;")
-    @Nullable
     Logger logger();
 
     interface Option extends JSObject {
