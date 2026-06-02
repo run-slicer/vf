@@ -36,9 +36,9 @@ public class DummyExecutorService implements ExecutorService {
     @Override
     public <T> Future<T> submit(Callable<T> task) {
         try {
-            return new DummyTask<>(task.call(), null);
+            return new TForkJoinTask<>(task.call(), null);
         } catch (Throwable t) {
-            return new DummyTask<>(null, t);
+            return new TForkJoinTask<>(null, t);
         }
     }
 
@@ -47,10 +47,10 @@ public class DummyExecutorService implements ExecutorService {
         try {
             task.run();
         } catch (Throwable t) {
-            return new DummyTask<>(null, t);
+            return new TForkJoinTask<>(null, t);
         }
 
-        return new DummyTask<>(result, null);
+        return new TForkJoinTask<>(result, null);
     }
 
     @Override
@@ -58,10 +58,10 @@ public class DummyExecutorService implements ExecutorService {
         try {
             task.run();
         } catch (Throwable t) {
-            return new DummyTask<>(null, t);
+            return new TForkJoinTask<>(null, t);
         }
 
-        return new DummyTask<>(null, null);
+        return new TForkJoinTask<>(null, null);
     }
 
     @Override

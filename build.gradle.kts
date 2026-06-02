@@ -1,9 +1,12 @@
+import org.teavm.gradle.api.JSModuleType
+import org.teavm.gradle.api.OptimizationLevel
+
 plugins {
     `java-library`
     alias(libs.plugins.teavm) // order matters?
 }
 
-val thisVersion = "0.6.3"
+val thisVersion = "0.6.4"
 
 group = "run.slicer"
 version = "$thisVersion-${libs.versions.vineflower.get()}"
@@ -11,16 +14,18 @@ description = "A JavaScript port of the Vineflower decompiler."
 
 repositories {
     mavenCentral()
-    mavenLocal()
     maven("https://teavm.org/maven/repository")
 }
 
-val vineflower by configurations.creating
+val vineflower: Configuration by configurations.creating
 configurations.api.configure { extendsFrom(vineflower) }
 
 dependencies {
     vineflower(libs.vineflower)
-    compileOnly(libs.teavm.core)
+    teavmAnnotationProcessor(libs.teavm.extension.annotation.processor) // hmm?
+    testImplementation(platform(libs.junit.bom))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // expand plugins into the compilation classpath
     implementation(provider {
@@ -32,28 +37,33 @@ java.toolchain {
     languageVersion = JavaLanguageVersion.of(21)
 }
 
-teavm.js {
-    mainClass = "run.slicer.vf.Main"
-    moduleType = org.teavm.gradle.api.JSModuleType.ES2015
-    /*obfuscated = false
-    optimization = org.teavm.gradle.api.OptimizationLevel.NONE*/
-}
+val debugging = false // set to true if you want an unobfuscated build for debugging
+teavm {
+    all {
+        mainClass = "run.slicer.vf.Main"
+        optimization = if (debugging) OptimizationLevel.NONE else OptimizationLevel.BALANCED
+    }
 
-teavm.wasmGC {
-    mainClass = "run.slicer.vf.Main"
-    modularRuntime = true
-    /*obfuscated = false
-    optimization = org.teavm.gradle.api.OptimizationLevel.NONE
-    disassembly = true*/
-}
+    js {
+        moduleType = JSModuleType.ES2015
+        obfuscated = !debugging
+    }
 
-/*tasks.disasmWasmGC {
-    html = false
-}*/
+    wasmGC {
+        modularRuntime = true
+        obfuscated = !debugging
+        disassembly = debugging
+    }
+}
 
 tasks {
+    disasmWasmGC {
+        html = false
+    }
+
     register<Copy>("copyDist") {
         group = "build"
+        description = "Copies the necessary files to the dist directory for distribution."
         dependsOn(generateJavaScript)
 
         from(
@@ -95,6 +105,12 @@ tasks {
                 """.trimIndent()
             )
         }
+    }
+
+    test {
+        useJUnitPlatform()
+
+        dependsOn("copyDist") // comment out if you want to edit the output and test
     }
 
     build {
