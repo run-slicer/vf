@@ -27,8 +27,8 @@ public class DecompilationTest {
     }
 
     public void runDecompile(Class<?>... classes) {
-        // node ./scripts/decompile.js <class name 1> <class name 2> <class path 1> <class path 2> <...>
-        final List<String> args = new ArrayList<>(List.of("node", "./scripts/decompile.js"));
+        // node ./src/test/resources/decompile.js <class name 1> <class name 2> <class path 1> <class path 2> <...>
+        final List<String> args = new ArrayList<>(List.of("node", "./src/test/resources/decompile.js"));
         for (final Class<?> clazz : classes) {
             args.add(internalName(clazz));
         }

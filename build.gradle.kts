@@ -37,22 +37,25 @@ java.toolchain {
     languageVersion = JavaLanguageVersion.of(21)
 }
 
-val debugging = false // set to true if you want an unobfuscated build for debugging
+val debugging = true // set to true if you want an unobfuscated build for debugging
 teavm {
-    all {
-        mainClass = "run.slicer.vf.Main"
-        optimization = if (debugging) OptimizationLevel.NONE else OptimizationLevel.BALANCED
-    }
-
     js {
+        mainClass = "run.slicer.vf.Main"
         moduleType = JSModuleType.ES2015
         obfuscated = !debugging
+        if (debugging) {
+            optimization = OptimizationLevel.NONE
+        }
     }
 
     wasmGC {
+        mainClass = "run.slicer.vf.Main"
         modularRuntime = true
         obfuscated = !debugging
         disassembly = debugging
+        if (debugging) {
+            optimization = OptimizationLevel.NONE
+        }
     }
 }
 

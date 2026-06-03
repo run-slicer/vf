@@ -1,4 +1,4 @@
-import { decompile } from "../dist/vf.js";
+import { decompile } from "../../../dist/vf.js";
 import { argv } from "node:process";
 import { readFile } from "node:fs/promises";
 
