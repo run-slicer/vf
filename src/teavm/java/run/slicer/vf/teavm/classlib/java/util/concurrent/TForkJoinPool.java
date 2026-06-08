@@ -5,14 +5,14 @@ public class TForkJoinPool extends DummyExecutorService {
     }
 
     @Override
-    public DummyTask<?> submit(Runnable task) {
+    public TForkJoinTask<?> submit(Runnable task) {
         try {
             task.run();
         } catch (Throwable t) {
-            return new DummyTask<>(null, t);
+            return new TForkJoinTask<>(null, t);
         }
 
-        return new DummyTask<>(null, null);
+        return new TForkJoinTask<>(null, null);
     }
 
     public interface ForkJoinWorkerThreadFactory {

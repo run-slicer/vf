@@ -1,10 +1,12 @@
 [versions]
 vineflower = "1.12.0"
-teavm = "0.14.0-SNAPSHOT"
+teavm = "0.15.0-dev-6"
+junit = "6.1.0"
 
 [libraries]
 vineflower = { group = "org.vineflower", name = "vineflower", version.ref = "vineflower" }
-teavm-core = { group = "org.teavm", name = "teavm-core", version.ref = "teavm" }
+teavm-extension-annotation-processor = { group = "org.teavm", name = "teavm-extension-annotation-processor", version.ref = "teavm" }
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
 
 [plugins]
 teavm = { id = "org.teavm", version.ref = "teavm" }

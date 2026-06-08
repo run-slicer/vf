@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-public record DummyTask<T>(T value, Throwable error) implements Future<T> {
+public record TForkJoinTask<T>(T value, Throwable error) implements Future<T> {
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
         return false;

@@ -37,8 +37,6 @@ const result = await decompile(["your/package/HelloWorld", /* you can decompile 
 console.log(result["your/package/HelloWorld"]);
 ```
 
-Or see the browser-based proof-of-concept in the [docs](./docs) directory.
-
 ## Notes
 
 This project leverages a dependency analyzer to determine which classes are needed for decompilation and pre-fetch them before decompilation begins.
