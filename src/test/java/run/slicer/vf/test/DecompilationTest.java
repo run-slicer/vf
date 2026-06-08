@@ -10,9 +10,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DecompilationTest {
     @TempDir
@@ -47,9 +48,9 @@ public class DecompilationTest {
             throw new RuntimeException(e);
         }
 
-        try {
+        try (final var executor = Executors.newSingleThreadExecutor()) {
             final Process proc = new ProcessBuilder(args).inheritIO().redirectErrorStream(true).start();
-            final var readerThread = Thread.startVirtualThread(() -> {
+            final var readerFuture = executor.submit(() -> {
                 try (final var reader = proc.inputReader()) {
                     reader.lines().forEach(line -> assertFalse(line.contains("Failed to load WASM module"), "WASM module failed to load"));
                 } catch (IOException e) {
@@ -60,9 +61,11 @@ public class DecompilationTest {
             final var code = proc.waitFor();
             assertEquals(0, code, "Expected zero exit code");
 
-            readerThread.join();
+            readerFuture.get();
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            fail(e.getCause());
         }
     }
 
