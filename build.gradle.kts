@@ -37,7 +37,7 @@ java.toolchain {
     languageVersion = JavaLanguageVersion.of(21)
 }
 
-val debugging = true // set to true if you want an unobfuscated build for debugging
+val debugging = false // set to true if you want an unobfuscated build for debugging
 teavm {
     js {
         mainClass = "run.slicer.vf.Main"

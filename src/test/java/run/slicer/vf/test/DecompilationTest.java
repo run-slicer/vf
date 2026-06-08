@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class DecompilationTest {
     @TempDir
@@ -46,8 +48,19 @@ public class DecompilationTest {
         }
 
         try {
-            final int code = new ProcessBuilder(args).inheritIO().start().waitFor();
-            assertEquals(0, code);
+            final Process proc = new ProcessBuilder(args).inheritIO().redirectErrorStream(true).start();
+            final var readerThread = Thread.startVirtualThread(() -> {
+                try (final var reader = proc.inputReader()) {
+                    reader.lines().forEach(line -> assertFalse(line.contains("Failed to load WASM module"), "WASM module failed to load"));
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+
+            final var code = proc.waitFor();
+            assertEquals(0, code, "Expected zero exit code");
+
+            readerThread.join();
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
