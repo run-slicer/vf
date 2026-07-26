@@ -117,6 +117,7 @@ public final class ClassSource implements IContextSource {
                                 if (name.charAt(0) == '[') {
                                     addType(name);
                                 } else {
+                                    addSuperclasses(name);
                                     addName(name);
                                 }
                             }
@@ -135,6 +136,37 @@ public final class ClassSource implements IContextSource {
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
+            }
+        }
+
+        private void addSuperclasses(String className) {
+            addName(className);
+            ResourceData resource = data.get(className);
+            if (resource == null) {
+                return;
+            }
+            final var is = new DataInputFullStream(resource.data());
+            try {
+                is.discard(8); // skip magic and version
+                final var cp = new ConstantPool(is);
+                is.discard(4); //skip access flags and this class
+                int superclassIndex = is.readUnsignedShort();
+                if (superclassIndex == 0) {
+                    return;
+                }
+                PooledConstant superclass = cp.getConstant(superclassIndex);
+                String superclassName = ((PrimitiveConstant) superclass).getString();
+                addSuperclasses(superclassName);
+                int interfacesCount = is.readUnsignedShort();
+                for (int i = 0; i < interfacesCount; i++) {
+                    int interfaceIndex = is.readUnsignedShort();
+                    PooledConstant interfaceConstant = cp.getConstant(interfaceIndex);
+                    String str = ((PrimitiveConstant) interfaceConstant).getString();
+                    addSuperclasses(str);
+                }
+
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
         }
 
