@@ -93,7 +93,16 @@ public final class ClassSource implements IContextSource {
         return res;
     }
 
-    private record DependencyAnalyzer(Map<String, ResourceData> data, Function<String, byte[]> source) {
+    private static final class DependencyAnalyzer {
+        private final Map<String, ResourceData> data;
+        private final Function<String, byte[]> source;
+        private final Set<String> checkedSuper = new HashSet<>();
+
+        DependencyAnalyzer(Map<String, ResourceData> data, Function<String, byte[]> source) {
+            this.data = data;
+            this.source = source;
+        }
+
         void analyze() {
             for (final ResourceData resource : new ArrayList<>(data.values())) {
                 if (resource == null) {
@@ -117,8 +126,7 @@ public final class ClassSource implements IContextSource {
                                 if (name.charAt(0) == '[') {
                                     addType(name);
                                 } else {
-                                    addSuperclasses(name);
-                                    addName(name);
+                                    addSuperTypes(name);
                                 }
                             }
                             case PooledConstant.CONSTANT_NameAndType -> {
@@ -139,7 +147,11 @@ public final class ClassSource implements IContextSource {
             }
         }
 
-        private void addSuperclasses(String className) {
+        private void addSuperTypes(String className) {
+            if (!checkedSuper.add(className)) {
+                return; // already visited
+            }
+
             addName(className);
             ResourceData resource = data.get(className);
             if (resource == null) {
@@ -156,15 +168,14 @@ public final class ClassSource implements IContextSource {
                 }
                 PooledConstant superclass = cp.getConstant(superclassIndex);
                 String superclassName = ((PrimitiveConstant) superclass).getString();
-                addSuperclasses(superclassName);
+                addSuperTypes(superclassName);
                 int interfacesCount = is.readUnsignedShort();
                 for (int i = 0; i < interfacesCount; i++) {
                     int interfaceIndex = is.readUnsignedShort();
                     PooledConstant interfaceConstant = cp.getConstant(interfaceIndex);
                     String str = ((PrimitiveConstant) interfaceConstant).getString();
-                    addSuperclasses(str);
+                    addSuperTypes(str);
                 }
-
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
